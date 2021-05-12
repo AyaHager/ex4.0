@@ -12,15 +12,13 @@ finalDict = {}
 def getRelevantDataIntoDict(country, response : dict, responseDest : dict):
     global finalDict
     finalDict[country] = {}
-    finalDict[country]["distance"] = response["rows"][0]["elements"][0]["distance"]["text"]
-    finalDict[country]["time"] =  response["rows"][0]["elements"][0]["duration"]["text"].split(" ")[0] + " hours"
+    finalDict[country]["distance"] = "the distance from Tel Aviv is " + response["rows"][0]["elements"][0]["distance"]["text"]
+    finalDict[country]["time"] = "duration time is " + response["rows"][0]["elements"][0]["duration"]["text"].split(" ")[0] + " hours"
     finalDict[country]["lat"] = responseDest['results'][0]["geometry"]["location"]['lat']
     finalDict[country]["lng"] = responseDest['results'][0]["geometry"]["location"]['lng']
 
 
-
 def read_data():
-    #please insert the key from text file
     api_key = ''
     address = 'תל אביב, ישראל'
     # url = "https://maps.googleapis.com/maps/api/geocode/json?units=imperial&origins=%s&destinations=%s&key=%s" % (address,addressRequierd, api_key)
@@ -33,10 +31,34 @@ def read_data():
         addressRequierd = line.split('\n')[0]
         url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=%s&destinations=%s&key=%s" % (
         address, addressRequierd, api_key)
-        response = requests.get(url).json()
+        try:
+            response = requests.get(url)
+            if not response.status_code == 200:
+                print("HTTP error", response.status_code)
+            else:
+                try:
+                    response = response.json()
+                except:
+                    print("Response not in valid JSON format")
+        except:
+            print("Something went wrong with requests.get")
+
         urlDest = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s" % (addressRequierd, api_key)
-        responseDest = requests.get(urlDest).json()
-        getRelevantDataIntoDict(addressRequierd, response, responseDest)
+        ##responseDest = requests.get(urlDest).json()
+        #getRelevantDataIntoDict(addressRequierd, response, responseDest)
+        try:
+            responseDest = requests.get(urlDest)
+            if not responseDest.status_code == 200:
+                print("HTTP error", responseDest.status_code)
+            else:
+                try:
+                    responseDest = responseDest.json()
+                    getRelevantDataIntoDict(addressRequierd, response, responseDest)
+                except:
+                    print("Response not in valid JSON format")
+        except:
+            print("Something went wrong with requests.get")
+
     print(finalDict)
 
 def getFarCities():
