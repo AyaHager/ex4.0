@@ -13,7 +13,7 @@ def getRelevantDataIntoDict(country, response : dict, responseDest : dict):
     global finalDict
     finalDict[country] = {}
     finalDict[country]["distance"] = "the distance from Tel Aviv is " + response["rows"][0]["elements"][0]["distance"]["text"]
-    finalDict[country]["time"] = "duration time is " + response["rows"][0]["elements"][0]["duration"]["text"].split(" ")[0] + " hours"
+    finalDict[country]["time"] = "duration time is " + response["rows"][0]["elements"][0]["duration"]["text"]
     finalDict[country]["lat"] = responseDest['results'][0]["geometry"]["location"]['lat']
     finalDict[country]["lng"] = responseDest['results'][0]["geometry"]["location"]['lng']
 
